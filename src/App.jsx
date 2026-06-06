@@ -3,6 +3,7 @@ import AnalysisForm from './components/AnalysisForm';
 import Dashboard from './components/Dashboard';
 import PhishingGuide from './components/PhishingGuide';
 import HistoryPanel from './components/HistoryPanel';
+import PatternGuide from './components/PatternGuide';
 import mockData from './data/mockAnalysis.json';
 import { analyzeHeuristics, extractDomain } from './services/heuristicEngine.js';
 
@@ -198,6 +199,8 @@ function App() {
         </div>
         <Dashboard analysisResult={analysisResult} isLoading={isLoading} />
       </main>
+
+      <PatternGuide />
     </div>
   );
 }

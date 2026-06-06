@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function PhishingGuide() {
   const [isOpen, setIsOpen] = useState(false);
@@ -166,6 +166,21 @@ export default function PhishingGuide() {
                   <li><strong>Creadores web:</strong> <code>versoly.page</code>, <code>sevalla.page</code>, <code>replit.app</code>.</li>
                   <li><strong>Cloud Storage & Sites:</strong> <code>web.core.windows.net</code>, <code>sites.google.com/view/</code>.</li>
                   <li><strong>TLDs baratos o sospechosos:</strong> extensiones como <code>.sbs</code> (ej. <code>rinvota.sbs</code>).</li>
+                </ul>
+              </div>
+
+              {/* SPF/DKIM Authentication Card */}
+              <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '0.75rem', padding: '1.25rem' }}>
+                <h4 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', margin: '0 0 0.75rem 0', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span style={{ color: 'var(--color-primary)' }}>●</span> Autenticación de Correo (SPF y DKIM)
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5', margin: '0 0 0.5rem 0' }}>
+                  Firmas de seguridad técnica que validan la legitimidad del remitente:
+                </p>
+                <ul style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', paddingLeft: '1.2rem', lineHeight: '1.5', margin: 0 }}>
+                  <li><strong>SPF</strong>: Lista los servidores e IPs autorizados a enviar correos a nombre del dominio de la organización.</li>
+                  <li><strong>DKIM</strong>: Firma criptográfica digital que garantiza que el mensaje no ha sido modificado en tránsito.</li>
+                  <li><strong>DMARC</strong>: Política que determina cómo actuar ante correos que fallan los filtros SPF o DKIM (spam o descarte).</li>
                 </ul>
               </div>
             </div>

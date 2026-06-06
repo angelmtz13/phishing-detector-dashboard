@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import ReportExporter from './ReportExporter';
 
 export default function Dashboard({ analysisResult, isLoading }) {
   const [techOpen, setTechOpen] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
 
-  // Reset accordion state on new analysis result
+  // Reset accordion state and trigger animation on new analysis result
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTechOpen(false);
+    if (analysisResult) {
+      setAnimateIn(false);
+      // Trigger re-animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnimateIn(true);
+        });
+      });
+    }
   }, [analysisResult]);
 
   if (isLoading) {
@@ -98,10 +110,25 @@ export default function Dashboard({ analysisResult, isLoading }) {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (riskScore / 100) * circumference;
 
+  /**
+   * Colorize technical detail log lines based on content type.
+   */
+  const getLogLineClass = (detail) => {
+    if (detail.includes('[urlscan.io') || detail.includes('[Registro #')) return 'log-intel';
+    if (detail.includes('[Alerta]')) return 'log-alert';
+    if (detail.includes('Filtro de confianza')) return 'log-safe';
+    if (detail.includes('Análisis de cabeceras') || detail.includes('Análisis Unicode') || detail.includes('Análisis de confusión')) return 'log-header';
+    return '';
+  };
+
   return (
-    <div className="results-container">
+    <div className={`results-container ${animateIn ? 'results-animate-in' : ''}`}>
       {/* Top Section - Gauge and Summary */}
-      <div className="glass-panel">
+      <div className="glass-panel" style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10 }}>
+          <ReportExporter analysisResult={analysisResult} />
+        </div>
+
         <div className="result-header-panel">
           {/* Circular SVG Gauge */}
           <div className="gauge-container">
@@ -121,6 +148,24 @@ export default function Dashboard({ analysisResult, isLoading }) {
               <span className="gauge-score">{riskScore}</span>
               <span className="gauge-max">/ 100</span>
             </div>
+            
+            {analysisResult.apiOffline && (
+              <div className="api-offline-badge" style={{
+                marginTop: '0.75rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '100px',
+                fontSize: '0.72rem',
+                fontWeight: '600',
+                background: 'var(--risk-medium-bg)',
+                border: '1px solid var(--risk-medium-border)',
+                color: 'var(--risk-medium)',
+                textAlign: 'center',
+                maxWidth: '220px',
+                lineHeight: '1.3'
+              }}>
+                Inteligencia externa no disponible (CORS). Resultado basado solo en análisis local.
+              </div>
+            )}
           </div>
 
           {/* Text Summary */}
@@ -151,7 +196,7 @@ export default function Dashboard({ analysisResult, isLoading }) {
         <div className="threat-list">
           {threatsFound && threatsFound.length > 0 ? (
             threatsFound.map((threat, idx) => (
-              <div key={idx} className="threat-item">
+              <div key={idx} className="threat-item" style={{ animationDelay: `${idx * 0.06}s` }}>
                 <span className="threat-icon" style={{ color: riskInfo.color }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
@@ -198,7 +243,7 @@ export default function Dashboard({ analysisResult, isLoading }) {
             {techOpen && (
               <div className="tech-details-content">
                 {technicalDetails.map((detail, idx) => (
-                  <div key={idx} className="tech-log-line">
+                  <div key={idx} className={`tech-log-line ${getLogLineClass(detail)}`}>
                     <span className="tech-prompt-symbol">&gt;</span>
                     <span>{detail}</span>
                   </div>

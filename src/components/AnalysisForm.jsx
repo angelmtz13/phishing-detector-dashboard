@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const EXAMPLES = {
   email: [
@@ -36,16 +36,29 @@ const EXAMPLES = {
       label: 'Enlace Oficial Intranet (Seguro)',
       text: 'https://intranet.mi-institucion.edu/portal'
     }
+  ],
+  headers: [
+    {
+      label: 'Cabecera Phishing (Fallo SPF/DKIM/DMARC)',
+      text: 'Delivered-To: victim@institucion.edu\nReceived: from mail.attacker-domain.com (unknown [198.51.100.12])\n\tby mx.institucion.edu with SMTP id a12b34c567;\n\tSat, 06 Jun 2026 12:00:00 -0600\nFrom: Soporte Tecnico <soporte@iceiy.com>\nTo: victim@institucion.edu\nSubject: Alerta de seguridad - Actualice su cuenta\nX-Mailer: PHPMailer 6.2.0 (https://github.com/PHPMailer/PHPMailer)\nAuthentication-Results: mx.institucion.edu;\n       spf=fail smtp.mailfrom=soporte@iceiy.com;\n       dkim=fail header.i=@iceiy.com;\n       dmarc=fail'
+    },
+    {
+      label: 'Cabecera Segura (Paso SPF/DKIM/DMARC)',
+      text: 'Delivered-To: victim@institucion.edu\nReceived: from mail.institucion.edu (mail.institucion.edu [192.0.2.55])\n\tby mx.institucion.edu with SMTP id x98y76z543;\n\tSat, 06 Jun 2026 11:30:00 -0600\nFrom: Servicio de Informatica <soporte-ti@institucion.edu>\nTo: victim@institucion.edu\nSubject: Mantenimiento Preventivo Anual\nAuthentication-Results: mx.institucion.edu;\n       spf=pass smtp.mailfrom=soporte-ti@institucion.edu;\n       dkim=pass header.i=@institucion.edu;\n       dmarc=pass'
+    }
   ]
 };
 
 const PLACEHOLDERS = {
   email: 'Pega el texto del correo sospechoso aquí...\n(Ej: "Estimado: usuario@institucion.edu este es su: ULTIMO AVISO...")',
-  url: 'Escribe o pega la dirección URL sospechosa...\n(Ej: https://verificacion-01--seguridad-0201.replit.app)'
+  url: 'Escribe o pega la dirección URL sospechosa...\n(Ej: https://verificacion-01--seguridad-0201.replit.app)',
+  headers: 'Pega las cabeceras raw del correo aquí...\n(Ej: "Delivered-To: ... Received: ... Authentication-Results: ...")'
 };
 
+const MAX_CHARS = 10000;
+
 export default function AnalysisForm({ onSubmit, isLoading }) {
-  const [activeTab, setActiveTab] = useState('email'); // 'email' | 'url'
+  const [activeTab, setActiveTab] = useState('email'); // 'email' | 'url' | 'headers'
   const [inputText, setInputText] = useState('');
   const [error, setError] = useState('');
 
@@ -66,9 +79,34 @@ export default function AnalysisForm({ onSubmit, isLoading }) {
       setError('Por favor, ingresa contenido para realizar el análisis.');
       return;
     }
+
+    if (activeTab === 'email' && inputText.trim().length < 30) {
+      setError('El correo debe tener al menos 30 caracteres para poder ser analizado.');
+      return;
+    }
+    if (activeTab === 'url' && inputText.trim().length < 8) {
+      setError('La URL debe tener al menos 8 caracteres para poder ser analizada.');
+      return;
+    }
+    if (activeTab === 'headers' && inputText.trim().length < 30) {
+      setError('Las cabeceras deben tener al menos 30 caracteres para poder ser analizadas.');
+      return;
+    }
+
     setError('');
     onSubmit(activeTab, inputText);
   };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= MAX_CHARS) {
+      setInputText(value);
+      if (value.trim()) setError('');
+    }
+  };
+
+  const charCount = inputText.length;
+  const charPercent = (charCount / MAX_CHARS) * 100;
 
   // SVGs for Tab icons
   const renderTabIcon = (tab) => {
@@ -85,6 +123,15 @@ export default function AnalysisForm({ onSubmit, isLoading }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+        );
+      case 'headers':
+        return (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
         );
       default:
@@ -127,6 +174,16 @@ export default function AnalysisForm({ onSubmit, isLoading }) {
                 {renderTabIcon('url')} Enlace URL
               </span>
             </button>
+            <button
+              type="button"
+              className={`tab-button ${activeTab === 'headers' ? 'active' : ''}`}
+              onClick={() => handleTabChange('headers')}
+              disabled={isLoading}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                {renderTabIcon('headers')} Cabeceras
+              </span>
+            </button>
           </div>
         </div>
 
@@ -137,13 +194,35 @@ export default function AnalysisForm({ onSubmit, isLoading }) {
               id="scanner-input"
               className="text-input"
               value={inputText}
-              onChange={(e) => {
-                setInputText(e.target.value);
-                if (e.target.value.trim()) setError('');
-              }}
+              onChange={handleInputChange}
               placeholder={PLACEHOLDERS[activeTab]}
               disabled={isLoading}
             />
+            <div className="char-counter-wrapper">
+              <div className="char-counter-bar">
+                <div
+                  className="char-counter-fill"
+                  style={{
+                    width: `${charPercent}%`,
+                    background: charPercent > 90 ? 'var(--risk-high)' : charPercent > 70 ? 'var(--risk-medium)' : 'var(--text-muted)',
+                  }}
+                />
+              </div>
+              <span className={`char-counter-text ${charPercent > 90 ? 'char-warn' : ''}`}>
+                {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
+              </span>
+            </div>
+          </div>
+          {activeTab === 'headers' && (
+            <div style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginTop: '0.4rem', fontStyle: 'italic', background: 'var(--color-primary-glow)', padding: '0.5rem 0.75rem', borderRadius: '0.4rem', border: '1px solid var(--border-subtle)', lineHeight: '1.4' }}>
+              <strong>¿Cómo obtener las cabeceras?</strong><br/>
+              • En <strong>Gmail</strong>: Abre el correo &gt; Tres puntos ⋮ &gt; <em>"Mostrar original"</em>.<br/>
+              • En <strong>Outlook</strong>: Abre el correo &gt; Tres puntos &gt; <em>"Ver" &gt; "Detalles del mensaje"</em> (u "Origen del mensaje").<br/>
+              Copia todo el texto y pégalo arriba.
+            </div>
+          )}
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.4rem', lineHeight: '1.4' }}>
+            Tu contenido se analiza localmente en el navegador. Solo el dominio de URLs personalizadas se consulta con urlscan.io de forma anónima.
           </div>
           {error && <span style={{ color: 'var(--risk-high)', fontSize: '0.85rem', fontWeight: 600 }}>{error}</span>}
         </div>

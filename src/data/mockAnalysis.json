@@ -193,6 +193,27 @@
         "Si has introducido credenciales, cámbialas de inmediato en el portal oficial de la organización.",
         "Informa al administrador de red para bloquear el dominio sospechoso a nivel perimetral."
       ]
+    },
+    {
+      "id": "institutional_block_alert_email",
+      "type": "email",
+      "riskLevel": "high",
+      "riskScore": 92,
+      "threatsFound": [
+        "Suplantación de soporte de seguridad institucional mediante lenguaje alarmista ('Notificación Final de Bloqueo')",
+        "Enlace malicioso apuntando a un dominio externo sospechoso (iceiy.com) para mantenimiento de cuenta",
+        "Presión psicológica exigiendo renovación de seguridad inmediata bajo amenaza de suspensión definitiva"
+      ],
+      "technicalDetails": [
+        "El enlace de destino mantener-cuenta.iceiy.com no pertenece a la infraestructura oficial institucional.",
+        "El cuerpo del correo simula falsamente pertenecer al departamento de Soporte Técnico de Seguridad de Correo.",
+        "Falta de autenticación SPF/DKIM para el dominio institucional en el servidor de envío."
+      ],
+      "recommendations": [
+        "NO hagas clic en el enlace https://mantener-cuenta.iceiy.com ni ingreses tus datos.",
+        "Reporta el correo inmediatamente a soporte de TI o al área de seguridad de la información.",
+        "Recuerda que tu organización nunca te exigirá validar cuentas en plataformas de hosting externo."
+      ]
     }
   ]
 }

@@ -1,0 +1,198 @@
+{
+  "scenarios": [
+    {
+      "id": "institutional_phishing_email",
+      "type": "email",
+      "riskLevel": "high",
+      "riskScore": 98,
+      "threatsFound": [
+        "Suplantación de soporte institucional utilizando lenguaje de urgencia extrema ('ÚLTIMO AVISO')",
+        "Amenaza de desactivación de cuenta de correo sin consentimiento del usuario",
+        "Enlace malicioso apuntando a un dominio externo no institucional (replit.app)",
+        "Solicitud de credenciales bajo la excusa de 'Proceso Básico De Vinculación 2Auth'"
+      ],
+      "technicalDetails": [
+        "El enlace destino verificacion-01--seguridad-0201.replit.app es un entorno público (Replit) no afiliado a sistemas institucionales oficiales.",
+        "Cabecera del correo enviada desde un servidor SMTP externo no autorizado por el dominio institucional.",
+        "Ausencia de firmas de seguridad corporativas válidas (SPF fail, DKIM inválido)."
+      ],
+      "recommendations": [
+        "NO hagas clic en el enlace ni introduzcas tu usuario y contraseña institucional.",
+        "Reporta el correo inmediatamente a soporte de TI o al área de seguridad informática de tu institución.",
+        "Ten en cuenta que tu organización nunca te solicitará validar cuentas mediante plataformas externas como Replit."
+      ]
+    },
+    {
+      "id": "institutional_fake_bonus_email",
+      "type": "email",
+      "riskLevel": "high",
+      "riskScore": 94,
+      "threatsFound": [
+        "Uso de ingeniería social prometiendo beneficios económicos falsos ('bono universitario de $150 USD')",
+        "Suplantación del departamento oficial de soporte de TI",
+        "Redirección a un sitio web de replit.app malicioso para clonar inicios de sesión"
+      ],
+      "technicalDetails": [
+        "Servidor de origen no registrado en los registros SPF de la institución.",
+        "El enlace de destino bono-estudiante-beca.replit.app intenta capturar credenciales de acceso al portal estudiantil."
+      ],
+      "recommendations": [
+        "Ignora cualquier correo que ofrezca dinero o becas a cambio de iniciar sesión en portales externos.",
+        "Compara la información con las redes sociales oficiales o la cartelera física de la institución.",
+        "Reporta el correo al área de soporte técnico oficial."
+      ]
+    },
+    {
+      "id": "safe_institutional_email",
+      "type": "email",
+      "riskLevel": "low",
+      "riskScore": 4,
+      "threatsFound": [
+        "Correo proveniente del dominio oficial interno de la institución.",
+        "Mensaje de carácter informativo firmado por el departamento oficial de TI.",
+        "Ausencia de enlaces externos a plataformas no institucionales."
+      ],
+      "technicalDetails": [
+        "Autenticación SPF: PASS (IP de salida corresponde al servidor Exchange institucional).",
+        "Firma DKIM: PASS (dominio verificado de la institución).",
+        "Enlace seguro HTTPS apuntando al portal de intranet oficial."
+      ],
+      "recommendations": [
+        "Este correo electrónico institucional es legítimo y seguro."
+      ]
+    },
+    {
+      "id": "institutional_fake_replit_url",
+      "type": "url",
+      "riskLevel": "high",
+      "riskScore": 97,
+      "threatsFound": [
+        "URL maliciosa alojada en un servicio de desarrollo público (replit.app) simulando seguridad institucional",
+        "Falta de relación organizativa con dominios de correo legítimos",
+        "Formulario activo diseñado para clonación de credenciales (Credential Harvester)"
+      ],
+      "technicalDetails": [
+        "Dominio: verificacion-01--seguridad-0201.replit.app.",
+        "Reputación: Reportado activamente por phishing institucional.",
+        "Cifrado SSL activo pero sin verificación organizativa corporativa (certificado Let's Encrypt estándar)."
+      ],
+      "recommendations": [
+        "NO ingreses tu dirección de correo ni tu contraseña en este enlace.",
+        "Cierra la pestaña inmediatamente.",
+        "Los portales institucionales de autenticación siempre residen en subdominios propios de la entidad (ej: *.institucion.edu)."
+      ]
+    },
+    {
+      "id": "institutional_typosquatting_url",
+      "type": "url",
+      "riskLevel": "high",
+      "riskScore": 85,
+      "threatsFound": [
+        "Uso de typosquatting imitando el portal de intranet oficial (intranet-universidad-portal.com)",
+        "Dominio registrado recientemente con fines fraudulentos"
+      ],
+      "technicalDetails": [
+        "Dominio registrado hace menos de una semana.",
+        "DNS Name Servers configurados en proveedores de ocultación de identidad de dominio.",
+        "Carece de la firma digital y los metadatos oficiales del portal de tu institución."
+      ],
+      "recommendations": [
+        "Compara el enlace con el marcador/favorito que usas habitualmente para acceder a la intranet.",
+        "No ingreses credenciales si el dominio termina en extensiones comerciales como .com o .net si tu institución usa .edu o .gob."
+      ]
+    },
+    {
+      "id": "safe_institutional_url",
+      "type": "url",
+      "riskLevel": "low",
+      "riskScore": 3,
+      "threatsFound": [
+        "Dominio oficial verificado de la institución (mi-institucion.edu)",
+        "Certificado SSL emitido a nombre de la entidad oficial de la organización"
+      ],
+      "technicalDetails": [
+        "El dominio cuenta con DNSSEC configurado correctamente.",
+        "Certificado de seguridad corporativo válido y vigente."
+      ],
+      "recommendations": [
+        "Este enlace institucional es seguro para navegar."
+      ]
+    },
+    {
+      "id": "safe_google_email",
+      "type": "email",
+      "riskLevel": "low",
+      "riskScore": 12,
+      "threatsFound": [
+        "No se encontraron indicadores comunes de phishing.",
+        "El correo proviene de un dominio verificado de Google y está firmado digitalmente."
+      ],
+      "technicalDetails": [
+        "Autenticación SPF: PASS (la IP está autorizada por google.com)",
+        "Firma DKIM: PASS (firma válida de google.com)"
+      ],
+      "recommendations": [
+        "El correo parece legítimo. Siempre mantente alerta ante solicitudes inusuales."
+      ]
+    },
+    {
+      "id": "safe_github_url",
+      "type": "url",
+      "riskLevel": "low",
+      "riskScore": 5,
+      "threatsFound": [
+        "Dominio oficial de confianza (github.com)",
+        "Certificado de seguridad SSL extendido y verificado"
+      ],
+      "technicalDetails": [
+        "Conexión cifrada de alta seguridad TLS 1.3."
+      ],
+      "recommendations": [
+        "El enlace es seguro para visitar."
+      ]
+    },
+    {
+      "id": "account_blocking_phishing_email",
+      "type": "email",
+      "riskLevel": "high",
+      "riskScore": 96,
+      "threatsFound": [
+        "Uso de títulos con sentido de urgencia extrema ('Notificación Final de Bloqueo')",
+        "Asunto alarmista diseñado para evadir el análisis reflexivo ('ALERTA EMAIL')",
+        "Solicitud de acción inmediata bajo amenaza de suspensión permanente",
+        "Enlaces a dominios externos no institucionales utilizando servicios de hosting gratuito o páginas dinámicas"
+      ],
+      "technicalDetails": [
+        "El cuerpo del mensaje contiene patrones típicos de phishing de renovación de credenciales.",
+        "Se detecta suplantación de servicios de soporte mediante el uso de palabras clave en el remitente.",
+        "Los enlaces adjuntos redirigen a dominios externos como iceiy.com, zya.me o versoly.page."
+      ],
+      "recommendations": [
+        "No respondas al remitente ni interactúes con las imágenes o botones del correo.",
+        "Nunca valides tus credenciales en enlaces externos de mantenimiento de cuenta.",
+        "Envía el correo al buzón de phishing/seguridad oficial de tu organización."
+      ]
+    },
+    {
+      "id": "malicious_hosting_phishing_url",
+      "type": "url",
+      "riskLevel": "high",
+      "riskScore": 95,
+      "threatsFound": [
+        "Uso de subdominios en servicios de alojamiento web gratuito o creadores de páginas (zya.me, sevalla.page, versoly.page, hstn.me, iceiy.com, rinvota.sbs)",
+        "Impersonación de servicios populares o de soporte (Docusign, Office 365, Web Support)",
+        "Uso de redirecciones o URLs de Google Sites para evadir filtros de reputación de correo"
+      ],
+      "technicalDetails": [
+        "El dominio analizado intenta simular páginas oficiales de renovación o soporte.",
+        "Alojado en infraestructuras de bajo coste o gratuitas comúnmente abusadas por atacantes.",
+        "Falta de registro organizativo legítimo y certificados SSL comerciales vinculados a la marca suplantada."
+      ],
+      "recommendations": [
+        "Cierra el navegador de inmediato.",
+        "Si has introducido credenciales, cámbialas de inmediato en el portal oficial de la organización.",
+        "Informa al administrador de red para bloquear el dominio sospechoso a nivel perimetral."
+      ]
+    }
+  ]
+}
